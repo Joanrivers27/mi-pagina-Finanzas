@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiosko Pyme | Registros</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body{background:#f0f2f5}
+    .records-page{max-width:1250px;margin:0 auto;padding:30px}
+    .records-header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
+    .records-card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 4px 15px rgba(0,0,0,.06);overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:900px}
+    th,td{padding:12px;border-bottom:1px solid #eee;text-align:left;font-size:13px;vertical-align:top}
+    th{background:#1a237e;color:#fff}
+    tr:hover td{background:#fafafa}
+    .danger{background:#d32f2f;color:#fff;border:0;border-radius:7px;padding:8px 12px;cursor:pointer;font-weight:700}
+    .danger:hover{background:#b71c1c}
+    .top-btn{background:#3d5afe;color:#fff;border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700}
+    .empty{padding:25px;text-align:center;color:#777}
+    .status-ok{color:#2e7d32;font-weight:700}
+    .status-warn{color:#c62828;font-weight:700}
+  </style>
+</head>
+<body>
+  <main class="records-page">
+    <div class="records-header">
+      <div>
+        <h1 style="color:#1a237e">👥 Registro de usuarios</h1>
+        <p style="color:#666;margin-top:5px">Usuarios y últimos resultados almacenados en Supabase.</p>
+      </div>
+      <div>
+        <button id="backBtn" class="top-btn">← Volver al dashboard</button>
+      </div>
+    </div>
+
+    <div class="records-card">
+      <p id="message" class="message">Cargando...</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Separar dinero</th>
+            <th>Punto de equilibrio</th>
+            <th>Última actualización</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="registros.js"></script>
+</body>
+</html>

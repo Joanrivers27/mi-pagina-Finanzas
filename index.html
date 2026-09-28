@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiosko Pyme | Balance & Crecimiento</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- PANTALLA 1: LOGIN -->
+  <div id="loginSection" class="view-section">
+    <div class="login-card">
+      <div class="brand-logo">
+        <span class="logo-icon">🏪</span>
+        <h2>Kiosko Pyme</h2>
+        <p>Inicia sesión para acceder a tu dashboard financiero</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="username">CORREO ELECTRÓNICO</label>
+          <input type="email" id="username" placeholder="correo@ejemplo.com" required>
+        </div>
+        <div class="input-group">
+          <label for="password">CONTRASEÑA</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary">Ingresar al Dashboard</button>
+      </form>
+
+      <p class="form-link">¿No tienes cuenta?
+        <button id="showRegisterBtn" class="link-button" type="button">Registrarte</button>
+      </p>
+      <p id="loginMessage" class="message"></p>
+    </div>
+
+    <div id="welcomeModal" class="modal-overlay hidden">
+      <div class="modal-card animate-bounce">
+        <div class="avatar-welcome">👨‍💼👩‍💼</div>
+        <h2>¡BIENVENIDO A KIOSKO PYME!</h2>
+        <p class="modal-subtitle">¡Tu Dashboard Financiero está listo!</p>
+        <p class="modal-desc">Aquí podrás separar tus ingresos, calcular tu punto de equilibrio y guardar tus resultados en la nube.</p>
+        <button id="closeWelcomeBtn" class="btn-success">¡Empecemos!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 1B: REGISTRO -->
+  <div id="registerSection" class="view-section hidden">
+    <div class="login-card">
+      <div class="brand-logo">
+        <span class="logo-icon">📝</span>
+        <h2>Crear cuenta</h2>
+        <p>Regístrate para guardar tus resultados financieros.</p>
+      </div>
+
+      <form id="registerForm">
+        <div class="input-group">
+          <label for="registerName">NOMBRE</label>
+          <input type="text" id="registerName" placeholder="Tu nombre" required>
+        </div>
+        <div class="input-group">
+          <label for="registerEmail">CORREO ELECTRÓNICO</label>
+          <input type="email" id="registerEmail" placeholder="correo@ejemplo.com" required>
+        </div>
+        <div class="input-group">
+          <label for="registerPassword">CONTRASEÑA</label>
+          <input type="password" id="registerPassword" minlength="6" placeholder="Mínimo 6 caracteres" required>
+        </div>
+        <div class="input-group">
+          <label for="registerPassword2">CONFIRMAR CONTRASEÑA</label>
+          <input type="password" id="registerPassword2" minlength="6" placeholder="Repite la contraseña" required>
+        </div>
+        <button type="submit" class="btn-success">Crear cuenta</button>
+      </form>
+
+      <p class="form-link">¿Ya tienes cuenta?
+        <button id="showLoginBtn" class="link-button" type="button">Volver al login</button>
+      </p>
+      <p id="registerMessage" class="message"></p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboardSection" class="dashboard-container hidden">
+    <header class="navbar">
+      <div class="nav-brand">
+        <span class="logo-icon">🏪</span>
+        <div>
+          <h1>Kiosko Pyme</h1>
+          <small>Balance & Crecimiento • <span id="userNameLabel">Usuario</span></small>
+        </div>
+      </div>
+      <nav class="nav-buttons">
+        <button id="navSepararBtn" class="nav-btn active">📊 Separar Dinero</button>
+        <button id="navEquilibrioBtn" class="nav-btn">⚖️ Punto de Equilibrio</button>
+        <button id="navRegistrosBtn" class="nav-btn hidden">👥 Registros</button>
+        <button id="logoutBtn" class="nav-btn btn-logout">🚪 Salir</button>
+      </nav>
+    </header>
+
+    <main class="content-area">
+      <!-- PANTALLA 2 -->
+      <section id="viewSeparar" class="tab-content active">
+        <div class="banner-golden-rule">
+          <span class="bulb-icon">💡</span>
+          <div>
+            <h3>La Regla de Oro del Emprendedor</h3>
+            <p>Mezclar tus finanzas personales con las de tu negocio puede dificultar el control financiero. Asígnate un sueldo fijo y administra los ingresos restantes.</p>
+          </div>
+        </div>
+
+        <div class="grid-2-cols">
+          <div class="card-panel">
+            <h3>Repartidor de Ingresos Mensuales</h3>
+            <div class="input-group">
+              <label for="totalIncome">Ingresos Totales del Negocio ($)</label>
+              <input type="number" id="totalIncome" value="3000" min="0" step="50">
+            </div>
+
+            <div class="sliders-container">
+              <p class="subtitle-label">AJUSTE DE PORCENTAJES</p>
+              <div class="slider-item">
+                <div class="slider-header"><span>Sueldo del Emprendedor (Max 50%)</span><span id="pSueldoVal" class="badge">40%</span></div>
+                <input type="range" id="sliderSueldo" min="0" max="50" value="40">
+              </div>
+              <div class="slider-item">
+                <div class="slider-header"><span>Reinversión & Crecimiento</span><span id="pReinversionVal" class="badge">30%</span></div>
+                <input type="range" id="sliderReinversion" min="0" max="50" value="30">
+              </div>
+              <div class="slider-item">
+                <div class="slider-header"><span>Impuestos y Emergencias</span><span id="pImpuestosVal" class="badge">20%</span></div>
+                <input type="range" id="sliderImpuestos" min="0" max="50" value="20">
+              </div>
+              <div class="slider-item">
+                <div class="slider-header"><span>Caja Chica Operativa (Restante)</span><span id="pCajaChicaVal" class="badge">10%</span></div>
+                <input type="range" id="sliderCajaChica" min="0" max="50" value="10" disabled>
+              </div>
+            </div>
+            <button id="saveSepararBtn" class="btn-save">💾 Guardar resultado</button>
+            <p id="saveSepararMessage" class="save-message"></p>
+          </div>
+
+          <div class="card-panel center-content">
+            <h3>Distribución de Fondos</h3>
+            <div class="chart-box"><canvas id="incomeDonutChart"></canvas></div>
+            <div class="cards-summary-grid">
+              <div class="summary-card card-blue"><div>👤</div><div><small>Tu Sueldo Fijo</small><h4 id="amountSueldo">$1,200.00</h4></div></div>
+              <div class="summary-card card-green"><div>📈</div><div><small>Fondo de Reinversión</small><h4 id="amountReinversion">$900.00</h4></div></div>
+              <div class="summary-card card-orange"><div>🛡️</div><div><small>Impuestos y Reservas</small><h4 id="amountImpuestos">$600.00</h4></div></div>
+              <div class="summary-card card-dark"><div>📦</div><div><small>Caja Chica Operativa</small><h4 id="amountCajaChica">$300.00</h4></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANTALLA 3 -->
+      <section id="viewEquilibrio" class="tab-content">
+        <div class="banner-golden-rule">
+          <span class="bulb-icon">⚖️</span>
+          <div>
+            <h3>¿Qué es el Punto de Equilibrio?</h3>
+            <p>Es el nivel de ventas donde los ingresos igualan exactamente a los costos totales. En este punto no ganas ni pierdes dinero.</p>
+          </div>
+        </div>
+
+        <div class="grid-2-cols">
+          <div class="card-panel">
+            <h3>Datos Financieros del Producto</h3>
+            <div class="input-group">
+              <label for="costosFijos">Costos Fijos Mensuales ($)</label>
+              <input type="number" id="costosFijos" value="1200" min="0" step="50">
+              <small class="help-text">Renta, nómina, luz, internet</small>
+            </div>
+            <div class="input-group">
+              <label for="precioVenta">Precio de Venta Unitario ($)</label>
+              <input type="number" id="precioVenta" value="25" min="0" step="1">
+              <small class="help-text">Precio final por unidad</small>
+            </div>
+            <div class="input-group">
+              <label for="costoVariable">Costo Variable Unitario ($)</label>
+              <input type="number" id="costoVariable" value="10" min="0" step="1">
+              <small class="help-text">Materia prima, empaque</small>
+            </div>
+            <button id="saveEquilibrioBtn" class="btn-save">💾 Guardar resultado</button>
+            <p id="saveEquilibrioMessage" class="save-message"></p>
+          </div>
+
+          <div class="card-panel">
+            <div class="metrics-row">
+              <div class="metric-box bg-green-light"><span>Unidades Mínimas a Vender</span><h2 id="metricUnidades">80 <small>uds</small></h2></div>
+              <div class="metric-box bg-blue-light"><span>Ventas Mínimas Necesarias</span><h2 id="metricVentas">$2,000.00</h2></div>
+            </div>
+            <div id="statusAlertBox" class="status-box status-green">
+              <div class="status-header"><span id="statusIcon">✅</span><h4 id="statusTitle">¡EXCELENTE!</h4></div>
+              <p id="statusDesc">Tu negocio está bien equilibrado.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-panel margin-top">
+          <h3>Gráfico Interactivo de Costos vs Ingresos</h3>
+          <div class="chart-container-lg"><canvas id="equilibrioChart"></canvas></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
