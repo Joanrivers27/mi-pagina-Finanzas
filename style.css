@@ -54,7 +54,7 @@ body { background:#f0f2f5; color:#333; min-height:100vh; }
 @keyframes modalPop { 0%{transform:scale(.7);opacity:0} 100%{transform:scale(1);opacity:1} }
 
 .dashboard-container { min-height:100vh; display:flex; flex-direction:column; }
-.navbar { background:#1a237e; color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; gap:20px; box-shadow:0 4px 10px rgba(0,0,0,.1); }
+.navbar { background:#AAF0D1; color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; gap:20px; box-shadow:0 4px 10px rgba(0,0,0,.1); }
 .nav-brand { display:flex; align-items:center; gap:12px; }
 .nav-brand .logo-icon { font-size:28px; }
 .nav-brand h1 { font-size:20px; }
