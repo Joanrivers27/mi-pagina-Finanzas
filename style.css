@@ -11,7 +11,7 @@ body { background:#f0f2f5; color:#333; min-height:100vh; }
 
 .view-section {
   min-height:100vh; display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);
+  background:linear-gradient(135deg,#AAF0D1 0%,#2a5298 100%);
   padding:20px;
 }
 .login-card {
