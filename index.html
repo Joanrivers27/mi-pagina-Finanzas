@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kiosko Pyme | Balance & Crecimiento</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,12 +13,11 @@
   <!-- PANTALLA 1: LOGIN -->
   <div id="loginSection" class="view-section">
     <div class="login-card">
-
-  <div class="brand-logo">
-    <img src="tienda.png" alt="Logo">
-    <h2>Kiosko Pyme</h2>
-  </div>
-     <p>Inicia sesión para acceder a tu dashboard financiero</p>
+      <div class="brand-logo">
+        <span class="logo-icon">🏪</span>
+        <h2>Kiosko Pyme</h2>
+        <p>Inicia sesión para acceder a tu dashboard financiero</p>
+      </div>
 
       <form id="loginForm">
         <div class="input-group">
@@ -98,6 +97,7 @@
       <nav class="nav-buttons">
         <button id="navSepararBtn" class="nav-btn active">📊 Separar Dinero</button>
         <button id="navEquilibrioBtn" class="nav-btn">⚖️ Punto de Equilibrio</button>
+        <button id="navSorteoBtn" class="nav-btn hidden">🎰 Sorteo</button>
         <button id="navRegistrosBtn" class="nav-btn hidden">👥 Registros</button>
         <button id="logoutBtn" class="nav-btn btn-logout">🚪 Salir</button>
       </nav>
@@ -164,35 +164,31 @@
           <span class="bulb-icon">⚖️</span>
           <div>
             <h3>¿Qué es el Punto de Equilibrio?</h3>
-            <p>Es el nivel de ventas donde los ingresos igualan exactamente a los costos totales. En este punto no ganas ni pierdes dinero.</p>
+            <p>Es el nivel de ventas donde los ingresos igualan exactamente a los costos totales. Agrega todos tus productos y calcula el equilibrio de tu negocio completo, según cuánto vende cada uno.</p>
           </div>
         </div>
 
         <div class="grid-2-cols">
           <div class="card-panel">
-            <h3>Datos Financieros del Producto</h3>
+            <h3>Costos y Productos</h3>
             <div class="input-group">
-              <label for="costosFijos">Costos Fijos Mensuales ($)</label>
+              <label for="costosFijos">Costos Fijos Mensuales Totales ($)</label>
               <input type="number" id="costosFijos" value="1200" min="0" step="50">
-              <small class="help-text">Renta, nómina, luz, internet</small>
+              <small class="help-text">Renta, nómina, luz, internet (se comparten entre todos los productos)</small>
             </div>
-            <div class="input-group">
-              <label for="precioVenta">Precio de Venta Unitario ($)</label>
-              <input type="number" id="precioVenta" value="25" min="0" step="1">
-              <small class="help-text">Precio final por unidad</small>
-            </div>
-            <div class="input-group">
-              <label for="costoVariable">Costo Variable Unitario ($)</label>
-              <input type="number" id="costoVariable" value="10" min="0" step="1">
-              <small class="help-text">Materia prima, empaque</small>
-            </div>
+
+            <p class="subtitle-label">PRODUCTOS</p>
+            <div id="productsList"></div>
+            <button id="addProductBtn" type="button" class="btn-secondary">➕ Agregar producto</button>
+            <small id="mixHint" class="help-text mix-hint"></small>
+
             <button id="saveEquilibrioBtn" class="btn-save">💾 Guardar resultado</button>
             <p id="saveEquilibrioMessage" class="save-message"></p>
           </div>
 
           <div class="card-panel">
             <div class="metrics-row">
-              <div class="metric-box bg-green-light"><span>Unidades Mínimas a Vender</span><h2 id="metricUnidades">80 <small>uds</small></h2></div>
+              <div class="metric-box bg-green-light"><span>Unidades Mínimas Totales</span><h2 id="metricUnidades">80 <small>uds</small></h2></div>
               <div class="metric-box bg-blue-light"><span>Ventas Mínimas Necesarias</span><h2 id="metricVentas">$2,000.00</h2></div>
             </div>
             <div id="statusAlertBox" class="status-box status-green">
@@ -203,16 +199,73 @@
         </div>
 
         <div class="card-panel margin-top">
-          <h3>Gráfico Interactivo de Costos vs Ingresos</h3>
+          <h3>Desglose por producto</h3>
+          <div class="table-wrap">
+            <table class="breakdown-table">
+              <thead>
+                <tr><th>Producto</th><th>Mezcla</th><th>Margen / ud</th><th>Unidades mín.</th><th>Ventas mín.</th></tr>
+              </thead>
+              <tbody id="breakdownBody"></tbody>
+              <tfoot id="breakdownFoot"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-panel margin-top">
+          <h3>Gráfico Interactivo de Costos vs Ingresos (negocio completo)</h3>
           <div class="chart-container-lg"><canvas id="equilibrioChart"></canvas></div>
+        </div>
+      </section>
+
+      <!-- PANTALLA 4: SORTEO (SOLO ADMIN) -->
+      <section id="viewSorteo" class="tab-content">
+        <div class="banner-golden-rule">
+          <span class="bulb-icon">🎰</span>
+          <div>
+            <h3>Sorteo entre usuarios registrados</h3>
+            <p>Esta sección es exclusiva para el administrador. La ruleta toma los correos de las personas registradas y elige un ganador al azar.</p>
+          </div>
+        </div>
+
+        <div class="grid-2-cols">
+          <div class="card-panel center-content">
+            <div class="wheel-wrap">
+              <div class="wheel-pointer"></div>
+              <canvas id="raffleCanvas" width="880" height="880"></canvas>
+            </div>
+            <button id="raffleSpinBtn" class="btn-spin" disabled>🎲 ¡Iniciar sorteo!</button>
+            <p id="raffleMessage" class="message"></p>
+          </div>
+
+          <div class="card-panel">
+            <h3>Participantes <span id="raffleCount" class="badge">0</span></h3>
+            <div class="raffle-options">
+              <label><input type="checkbox" id="raffleExcludeMe" checked> Excluirme del sorteo (administrador)</label>
+              <label><input type="checkbox" id="raffleNoRepeat" checked> No repetir ganadores anteriores</label>
+            </div>
+            <button id="raffleReloadBtn" type="button" class="btn-secondary">🔄 Actualizar participantes</button>
+            <div id="raffleParticipants" class="participants-list"></div>
+
+            <p class="subtitle-label">GANADORES DE ESTA SESIÓN</p>
+            <ol id="raffleHistory" class="winners-list"><li class="empty-li">Aún no hay ganadores.</li></ol>
+          </div>
         </div>
       </section>
     </main>
   </div>
 
-  <script src="script.js"></script>
-</body>
-</html>
+  <!-- MODAL GANADOR -->
+  <div id="winnerModal" class="modal-overlay hidden">
+    <canvas id="confettiCanvas"></canvas>
+    <div class="modal-card winner-card animate-bounce">
+      <div class="trophy">🏆</div>
+      <h2>🎉 ¡FELICIDADES, GANADOR! 🎉</h2>
+      <p id="winnerName" class="winner-name"></p>
+      <p id="winnerEmail" class="winner-email"></p>
+      <p id="winnerMsg" class="modal-desc"></p>
+      <button id="closeWinnerBtn" class="btn-success">¡Genial!</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
