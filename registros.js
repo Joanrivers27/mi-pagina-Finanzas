@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         : "Sin guardar";
 
       const equilibrioText = equilibrio
-        ? `Equilibrio: ${equilibrio.unidades_equilibrio || 0} uds<br>Ventas: $${Number(equilibrio.ventas_equilibrio || 0).toFixed(2)}`
+        ? `${Array.isArray(equilibrio.productos) ? "Productos: " + equilibrio.productos.length + "<br>" : ""}Equilibrio: ${equilibrio.unidades_equilibrio || 0} uds<br>Ventas: $${Number(equilibrio.ventas_equilibrio || 0).toFixed(2)}`
         : "Sin guardar";
 
       tr.innerHTML = `
@@ -108,3 +108,4 @@ document.addEventListener("DOMContentLoaded", async () => {
       .replaceAll("'","&#039;");
   }
 });
+
