@@ -572,6 +572,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   let raffleRotation = 0;
   let raffleSpinning = false;
   let confettiRAF = null;
+  const wheelLogo = new Image();
+  wheelLogo.onload = () => drawWheel(raffleRotation);
+  wheelLogo.src = "tienda.png";
 
   function randomFloat() {
     const a = new Uint32Array(1);
@@ -674,8 +677,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     ctx.beginPath(); ctx.arc(c, c, 54, 0, Math.PI * 2);
     ctx.fillStyle = "#fff"; ctx.fill();
     ctx.lineWidth = 8; ctx.strokeStyle = "#1a237e"; ctx.stroke();
-    ctx.font = "44px Segoe UI Emoji, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillStyle = "#000"; ctx.fillText("🏪", c, c + 2);
+    if (wheelLogo.complete && wheelLogo.naturalWidth) {
+      ctx.drawImage(wheelLogo, c - 32, c - 32, 64, 64);
+    } else {
+      ctx.font = "44px Segoe UI Emoji, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "#000"; ctx.fillText("🏪", c, c + 2);
+    }
   }
 
   function spinRaffle() {
@@ -846,4 +853,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     showSection(loginSection);
   }
 });
-
